@@ -1,14 +1,12 @@
 package com.lasalle.spaceapps.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.lasalle.spaceapps.ui.screens.SplashScreen
-import com.lasalle.spaceapps.ui.screens.LoginScreen
-import com.lasalle.spaceapps.ui.screens.MainScreen
-
-
+import androidx.navigation.navArgument
+import com.lasalle.spaceapps.ui.screens.*
 
 @Composable
 fun SpaceAppsNavigation() {
@@ -31,15 +29,42 @@ fun SpaceAppsNavigation() {
         composable("login") {
             LoginScreen(
                 onNavigateToMain = {
-                    navController.navigate("main") {
+                    navController.navigate("rocket_list") {
                         popUpTo("login") { inclusive = true }
                     }
                 }
             )
         }
 
-        composable("main") {
-            MainScreen()
+        composable("rocket_list") {
+            RocketListScreen(
+                onNavigateToDetail = { rocketId ->
+                    navController.navigate("rocket_detail/$rocketId")
+                },
+                onLogout = {
+                    navController.navigate("login") {
+                        popUpTo("rocket_list") { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        composable(
+            route = "rocket_detail/{rocketId}",
+            arguments = listOf(navArgument("rocketId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val rocketId = backStackEntry.arguments?.getString("rocketId") ?: ""
+            RocketDetailScreen(
+                rocketId = rocketId,
+                onNavigateBack = {
+                    navController.popBackStack()
+                }
+            )
         }
     }
+}
+
+@Composable
+fun RocketDetailScreen(rocketId: String, onNavigateBack: () -> Boolean) {
+    TODO("Not yet implemented")
 }

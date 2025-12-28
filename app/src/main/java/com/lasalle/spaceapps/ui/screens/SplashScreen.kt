@@ -43,7 +43,7 @@ fun SplashScreen(
             animationSpec = tween(500)
         )
 
-        delay(2000)
+        delay(3000)
         onNavigateToLogin()
     }
 
