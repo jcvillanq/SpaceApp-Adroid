@@ -3,6 +3,7 @@ package com.lasalle.spaceapps.ui.screens
 
 import android.content.Intent
 import android.net.Uri
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -13,8 +14,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -22,6 +25,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.lasalle.spaceapps.R
 import kotlinx.coroutines.launch
 
 @Composable
@@ -93,9 +97,10 @@ fun LoginScreen(
             verticalArrangement = Arrangement.Center
         ) {
             // Logo/Título
-            Text(
-                text = "🚀",
-                fontSize = 60.sp
+            Image(
+                painter = painterResource(id = R.drawable.logoversion2),
+                contentDescription = "Rocket Logo",
+
             )
 
             Text(

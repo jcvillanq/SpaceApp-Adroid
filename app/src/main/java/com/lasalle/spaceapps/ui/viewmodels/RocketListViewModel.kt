@@ -1,13 +1,13 @@
 package com.lasalle.spaceapps.ui.viewmodels
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.lasalle.spaceapps.data.local.SpaceAppsDatabase
 import com.lasalle.spaceapps.data.model.Rocket
 import com.lasalle.spaceapps.data.remote.RetrofitInstance
 import com.lasalle.spaceapps.data.repository.RocketRepository
-import com.lasalle.spaceapps.data.repository.Result
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -32,16 +32,26 @@ class RocketListViewModel(application: Application) : AndroidViewModel(applicati
 
     fun loadRockets() {
         viewModelScope.launch {
-            repository.getRockets().collect { result ->
-                _uiState.value = when (result) {
-                    is Result.Loading -> RocketListUiState.Loading
-                    is Result.Success -> {
-                        allRockets = result.data
-                        filterRockets(_searchQuery.value)
-                        RocketListUiState.Success(result.data)
-                    }
-                    is Result.Error -> RocketListUiState.Error(result.message)
+            _uiState.value = RocketListUiState.Loading
+            Log.d("RocketListViewModel", "Iniciando carga de cohetes...")  // ← LOG
+
+            try {
+                val rockets = repository.getRockets()
+                allRockets = rockets
+                Log.d("RocketListViewModel", "Cohetes obtenidos: ${rockets.size}")  // ← LOG
+
+                _uiState.value = if (rockets.isEmpty()) {
+                    Log.d("RocketListViewModel", "Lista vacía")  // ← LOG
+                    RocketListUiState.Empty
+                } else {
+                    Log.d("RocketListViewModel", "Lista con datos: ${rockets.size} cohetes")  // ← LOG
+                    RocketListUiState.Success(rockets)
                 }
+            } catch (e: Exception) {
+                Log.e("RocketListViewModel", "ERROR al cargar cohetes", e)  // ← LOG
+                _uiState.value = RocketListUiState.Error(
+                    e.message ?: "Error desconocido al cargar cohetes"
+                )
             }
         }
     }

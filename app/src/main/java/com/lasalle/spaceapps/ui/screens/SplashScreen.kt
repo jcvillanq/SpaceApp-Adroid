@@ -74,7 +74,7 @@ fun SplashScreen(
             )
 
             Text(
-                text = "Explora el universo",
+                text = "Explora los cohetes",
                 fontSize = 16.sp,
                 color = Color.White.copy(alpha = 0.7f)
             )

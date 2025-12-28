@@ -12,7 +12,6 @@ data class Rocket(
     @PrimaryKey
     val id: String,
     val name: String,
-    val type: String? = null,
     val active: Boolean = false,
     val stages: Int? = null,
     val boosters: Int? = null,
@@ -47,7 +46,6 @@ data class Mass(
     val kg: Int? = null,
     val lb: Int? = null
 )
-
 // Converters para Room (para guardar listas y objetos complejos)
 class Converters {
     @TypeConverter

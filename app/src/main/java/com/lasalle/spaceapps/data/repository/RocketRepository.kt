@@ -1,46 +1,45 @@
 package com.lasalle.spaceapps.data.repository
 
+import android.util.Log
 import com.lasalle.spaceapps.data.local.RocketDao
 import com.lasalle.spaceapps.data.model.Rocket
 import com.lasalle.spaceapps.data.remote.SpaceXApi
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 
 class RocketRepository(
     private val api: SpaceXApi,
-    private val dao: RocketDao
+    private val rocketDao: RocketDao
 ) {
-    fun getRockets(): Flow<Result<List<Rocket>>> = flow {
-        emit(Result.Loading)
-
-        try {
-            // Intenta obtener de la API
+    suspend fun getRockets(): List<Rocket> {
+        return try {
+            Log.d("RocketRepository", "Llamando a la API...")
             val rockets = api.getRockets()
+            Log.d("RocketRepository", "API respondió con ${rockets.size} cohetes")
 
-            // Guarda en la base de datos local
-            dao.deleteAllRockets()
-            dao.insertRockets(rockets)
+            // Guardar en base de datos local
+            Log.d("RocketRepository", "Guardando en BD local...")
+            rocketDao.insertAll(rockets)
+            Log.d("RocketRepository", "Guardado exitoso")
 
-            emit(Result.Success(rockets))
+            rockets
         } catch (e: Exception) {
-            // Si falla, intenta cargar de la base de datos local
-            dao.getAllRockets().collect { localRockets ->
-                if (localRockets.isNotEmpty()) {
-                    emit(Result.Success(localRockets))
-                } else {
-                    emit(Result.Error("No se pudieron cargar los cohetes. Verifica tu conexión."))
-                }
+            Log.e("RocketRepository", "Error en API, intentando BD local", e)
+
+            // Si falla, intentar cargar desde BD local
+            val localRockets = rocketDao.getAllRockets()
+            Log.d("RocketRepository", "BD local devolvió ${localRockets.size} cohetes")
+
+            if (localRockets.isEmpty()) {
+                Log.e("RocketRepository", "BD local también vacía, lanzando excepción")
+                throw e
             }
+            localRockets  // 
         }
     }
 
     suspend fun getRocketById(id: String): Rocket? {
-        return dao.getRocketById(id)
+        Log.d("RocketRepository", "Buscando cohete con ID: $id")
+        val rocket = rocketDao.getRocketById(id)
+        Log.d("RocketRepository", "Cohete encontrado: ${rocket?.name ?: "null"}")
+        return rocket
     }
-}
-
-sealed class Result<out T> {
-    object Loading : Result<Nothing>()
-    data class Success<T>(val data: T) : Result<T>()
-    data class Error(val message: String) : Result<Nothing>()
 }
