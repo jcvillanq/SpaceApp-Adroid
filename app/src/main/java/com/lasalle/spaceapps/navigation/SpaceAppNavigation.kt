@@ -6,7 +6,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.lasalle.spaceapps.ui.screens.*
+import com.lasalle.spaceapps.ui.screens.LoginScreen
+import com.lasalle.spaceapps.ui.screens.RocketDetailScreen
+import com.lasalle.spaceapps.ui.screens.RocketListScreen
+import com.lasalle.spaceapps.ui.screens.SplashScreen
 
 @Composable
 fun SpaceAppsNavigation() {
@@ -62,9 +65,4 @@ fun SpaceAppsNavigation() {
             )
         }
     }
-}
-
-@Composable
-fun RocketDetailScreen(rocketId: String, onNavigateBack: () -> Boolean) {
-    TODO("Not yet implemented")
 }

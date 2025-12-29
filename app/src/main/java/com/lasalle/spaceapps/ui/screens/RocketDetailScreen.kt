@@ -1,5 +1,6 @@
 package com.lasalle.spaceapps.ui.screens
 
+import android.app.Application
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.background
@@ -26,13 +27,18 @@ import coil.request.ImageRequest
 import java.text.NumberFormat
 import java.util.Locale
 import com.lasalle.spaceapps.ui.viewmodels.RocketDetailViewModel
+import com.lasalle.spaceapps.ui.viewmodels.RocketDetailViewModelFactory
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RocketDetailScreen(
     rocketId: String,
     onNavigateBack: () -> Unit,
-    viewModel: RocketDetailViewModel = viewModel()
+    viewModel: RocketDetailViewModel = viewModel(
+        factory = RocketDetailViewModelFactory(
+            LocalContext.current.applicationContext as Application
+        )
+    )
 ) {
     val rocket by viewModel.rocket.collectAsState()
     val context = LocalContext.current
